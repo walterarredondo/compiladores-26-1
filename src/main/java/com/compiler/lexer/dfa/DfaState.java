@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.compiler.lexer.nfa.State;
+import com.compiler.lexer.TokenType;
 
 /**
  * DfaState
@@ -12,6 +13,7 @@ import com.compiler.lexer.nfa.State;
  * Represents a single state in a Deterministic Finite Automaton (DFA).
  * Each DFA state corresponds to a set of states from the original NFA.
  * Provides methods for managing transitions, checking finality, and equality based on NFA state sets.
+ * Extended to support token information for lexical analysis.
  */
 public class DfaState {
     private static int nextId = 0;
@@ -31,6 +33,18 @@ public class DfaState {
      * Map of input symbols to destination DFA states (transitions).
      */
     public final Map<Character, DfaState> transitions;
+    
+    /**
+     * The token type associated with this state if it's a final state.
+     * Used for lexical analysis to determine what token to generate.
+     */
+    public TokenType tokenType;
+    
+    /**
+     * The priority of the token type for this state.
+     * Lower values indicate higher priority.
+     */
+    public int tokenPriority;
 
     /**
      * Constructs a new DFA state.
@@ -41,6 +55,8 @@ public class DfaState {
         this.nfaStates = nfaStates;
         this.isFinal = false;
         this.transitions = new HashMap<>();
+        this.tokenType = null;
+        this.tokenPriority = Integer.MAX_VALUE;
     }
 
     /**
@@ -88,7 +104,8 @@ public class DfaState {
      */
     @Override
     public String toString() {
-        return "DfaState{id=" + id + ", isFinal=" + isFinal + ", nfaStates=" + nfaStates.size() + "}";
+        String tokenInfo = (tokenType != null) ? ", tokenType=" + tokenType : "";
+        return "DfaState{id=" + id + ", isFinal=" + isFinal + ", nfaStates=" + nfaStates.size() + tokenInfo + "}";
     }
 
     /**
@@ -122,5 +139,34 @@ public class DfaState {
      */
     public Set<State> getName() {
         return nfaStates;
+    }
+    
+    /**
+     * Sets the token type and priority for this final state.
+     * @param tokenType The token type to associate with this state.
+     * @param priority The priority of this token type.
+     */
+    public void setTokenInfo(TokenType tokenType, int priority) {
+        this.tokenType = tokenType;
+        this.tokenPriority = priority;
+        if (tokenType != null) {
+            this.isFinal = true;
+        }
+    }
+    
+    /**
+     * Gets the token type associated with this state.
+     * @return The token type, or null if not a final state.
+     */
+    public TokenType getTokenType() {
+        return tokenType;
+    }
+    
+    /**
+     * Gets the token priority for this state.
+     * @return The token priority.
+     */
+    public int getTokenPriority() {
+        return tokenPriority;
     }
 }
