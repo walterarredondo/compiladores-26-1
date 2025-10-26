@@ -9,17 +9,22 @@ public class Token {
      * The type of this token.
      */
     public final TokenType type;
-    
+
     /**
      * The actual text (lexeme) that was matched.
      */
     public final String lexeme;
-    
+
     /**
      * The starting position of this token in the input string.
      */
     public final int position;
-    
+
+    /**
+     * Optional string representation of type (for parser testing).
+     */
+    public final String typeString;
+
     /**
      * Constructs a new token.
      * @param type The token type.
@@ -30,6 +35,20 @@ public class Token {
         this.type = type;
         this.lexeme = lexeme;
         this.position = position;
+        this.typeString = null;
+    }
+
+    /**
+     * Convenience constructor for simple tokens where the type name matches the lexeme.
+     * Used primarily in parser testing.
+     * @param typeString The type as a string.
+     * @param lexeme The matched text.
+     */
+    public Token(String typeString, String lexeme) {
+        this.type = null;
+        this.lexeme = lexeme;
+        this.position = 0;
+        this.typeString = typeString;
     }
     
     /**
